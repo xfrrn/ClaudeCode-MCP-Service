@@ -1,5 +1,6 @@
 ﻿# wechat_mcp/mcp_server.py
 import importlib
+import sys
 from pathlib import Path
 from typing import Any, Dict
 
@@ -17,12 +18,17 @@ def load_plugins(registry: ToolRegistry, ctx: AppContext, providers_dir: Path) -
     for entry in providers_dir.iterdir():
         if not entry.is_dir():
             continue
-        plugin_path = entry / "plugin.py"
-        if not plugin_path.exists():
-            continue
-
         module_name = f"{entry.name}.plugin"
-        module = importlib.import_module(module_name)
+        try:
+            module = importlib.import_module(module_name)
+        except ModuleNotFoundError:
+            # Allow local dev without installing workspace package
+            src_path = entry / "src"
+            if src_path.exists():
+                sys.path.insert(0, str(src_path))
+                module = importlib.import_module(module_name)
+            else:
+                continue
         if hasattr(module, "register"):
             module.register(registry, ctx)
 
