@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Dict
 
-from core.response import ok, fail
+from mcp_server.core.response import ok, fail
 
 
 Handler = Callable[["AppContext", Dict[str, Any]], Any]

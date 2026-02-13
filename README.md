@@ -1,41 +1,48 @@
 ﻿# wechat_mcp/README.md
-# MCP Server (Minimal Template)
+# MCP Server (Minimal Template, uv workspace)
 
 ## Architecture
-- `mcp_server.py` loads configuration, builds `AppContext`, auto-discovers plugins, and routes tool calls.
-- `core/` contains registry, context, response helpers, and a simple HTTP client.
-- `providers/<name>/` defines a plugin with `plugin.py` and a `tools/` package.
+- `src/mcp_server/main.py` loads configuration, builds `AppContext`, auto-discovers plugins, and routes tool calls.
+- `src/mcp_server/core/` contains registry, context, response helpers, and a simple HTTP client.
+- `providers/<name>/` are workspace packages; each provides `plugin.py` and `tools/` as a standalone package.
 
 ## Directory
 ```
 ClaudeCode-MCP-Service/
-├── mcp_server.py
-├── core/
-│ ├── registry.py
-│ ├── context.py
-│ ├── errors.py
-│ ├── response.py
-│ └── http_client.py
+├── pyproject.toml
+├── uv.lock
+├── src/
+│ └── mcp_server/
+│   ├── main.py
+│   └── core/
+│     ├── registry.py
+│     ├── context.py
+│     ├── errors.py
+│     ├── response.py
+│     └── http_client.py
 ├── providers/
 │ ├── hello/
-│ │ ├── plugin.py
-│ │ └── tools/
-│ │ └── say.py
+│ │ ├── pyproject.toml
+│ │ └── src/hello/
+│ │   ├── plugin.py
+│ │   └── tools/
+│ │     └── say.py
 │ └── wechat/
-│ ├── plugin.py
-│ └── tools/
-│ ├── article_fetch.py
-│ ├── mp_search.py
-│ └── mp_list.py
+│   ├── pyproject.toml
+│   └── src/wechat/
+│     ├── plugin.py
+│     └── tools/
+│       ├── article_fetch.py
+│       ├── mp_search.py
+│       └── mp_list.py
 ├── config.example.toml
-├── requirements.txt
 └── README.md
 ```
 
-## Run
+## Run (uv)
 ```bash
-pip install -r requirements.txt
-uvicorn mcp_server:app --reload --host 0.0.0.0 --port 8000
+uv sync
+uv run uvicorn mcp_server.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## API
@@ -49,9 +56,10 @@ uvicorn mcp_server:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## Add New Plugin
-1. Create `providers/<plugin>/plugin.py` and `providers/<plugin>/tools/`.
-2. Implement tools and register them in `register(registry, ctx)`.
-3. No core change required; the server auto-discovers plugins.
+1. Create a new workspace package under `providers/<plugin>/`.
+2. Put code in `providers/<plugin>/src/<plugin>/plugin.py` and `tools/`.
+3. Add the provider path to `[tool.uv.workspace].members` in `pyproject.toml`.
+4. Run `uv sync`. No core change required; the server auto-discovers plugins.
 
 ## Add New Tool
 - Define a handler: `def handler(ctx, payload): ...`.

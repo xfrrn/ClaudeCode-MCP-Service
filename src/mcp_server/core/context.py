@@ -16,7 +16,7 @@ except ModuleNotFoundError:  # pragma: no cover
     except ModuleNotFoundError:  # pragma: no cover
         tomllib = None  # type: ignore
 
-from core.http_client import HttpClient
+from mcp_server.core.http_client import HttpClient
 
 
 @dataclass

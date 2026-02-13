@@ -6,8 +6,8 @@ from typing import Any, Dict
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from core.context import AppContext
-from core.registry import ToolRegistry
+from mcp_server.core.context import AppContext
+from mcp_server.core.registry import ToolRegistry
 
 
 def load_plugins(registry: ToolRegistry, ctx: AppContext, providers_dir: Path) -> None:
@@ -21,7 +21,7 @@ def load_plugins(registry: ToolRegistry, ctx: AppContext, providers_dir: Path) -
         if not plugin_path.exists():
             continue
 
-        module_name = f"providers.{entry.name}.plugin"
+        module_name = f"{entry.name}.plugin"
         module = importlib.import_module(module_name)
         if hasattr(module, "register"):
             module.register(registry, ctx)
@@ -40,7 +40,8 @@ def create_app(config_path: Path | None = None) -> FastAPI:
     cfg = Path("config.example.toml") if config_path is None else config_path
     ctx = build_context(cfg)
     registry = ToolRegistry()
-    load_plugins(registry, ctx, Path(__file__).parent / "providers")
+    repo_root = Path(__file__).resolve().parents[2]
+    load_plugins(registry, ctx, repo_root / "providers")
 
     app = FastAPI(title="MCP Server", version="0.1.0")
 

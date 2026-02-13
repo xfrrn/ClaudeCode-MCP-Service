@@ -1,7 +1,7 @@
 ﻿# wechat_mcp/providers/wechat/tools/mp_list.py
 from typing import Dict, Any
 
-from core.response import fail
+from mcp_server.core.response import fail
 
 
 def mp_list(ctx, payload: Dict[str, Any]):

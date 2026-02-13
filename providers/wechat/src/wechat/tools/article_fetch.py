@@ -1,7 +1,7 @@
 ﻿# wechat_mcp/providers/wechat/tools/article_fetch.py
 from typing import Dict, Any
 
-from core.response import fail
+from mcp_server.core.response import fail
 
 
 def article_fetch(ctx, payload: Dict[str, Any]):

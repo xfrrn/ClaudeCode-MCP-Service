@@ -1,8 +1,8 @@
 ﻿# wechat_mcp/providers/wechat/plugin.py
-from core.registry import MCPTool
-from providers.wechat.tools.article_fetch import article_fetch
-from providers.wechat.tools.mp_search import mp_search
-from providers.wechat.tools.mp_list import mp_list
+from src.mcp_server.core.registry import MCPTool
+from wechat.tools.article_fetch import article_fetch
+from wechat.tools.mp_search import mp_search
+from wechat.tools.mp_list import mp_list
 
 
 def register(registry, ctx):

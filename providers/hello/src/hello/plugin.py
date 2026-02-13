@@ -1,6 +1,6 @@
 ﻿# wechat_mcp/providers/hello/plugin.py
-from core.registry import MCPTool
-from providers.hello.tools.say import say
+from src.mcp_server.core.registry import MCPTool
+from hello.tools.say import say
 
 
 def register(registry, ctx):

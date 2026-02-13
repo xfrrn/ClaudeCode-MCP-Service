@@ -12,6 +12,7 @@ __pycache__/
 venv/
 env/
 .env/
+uv.lock
 
 # Tooling caches
 .pytest_cache/
