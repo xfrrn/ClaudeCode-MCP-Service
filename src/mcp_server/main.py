@@ -1,14 +1,16 @@
 ﻿# wechat_mcp/mcp_server.py
+import contextlib
 import importlib
 import sys
 from pathlib import Path
 from typing import Any, Dict
 
 from fastapi import FastAPI, HTTPException
+from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel
 
 from mcp_server.core.context import AppContext
-from mcp_server.core.registry import ToolRegistry
+from mcp_server.core.registry import MCPTool, ToolRegistry
 
 
 def load_plugins(registry: ToolRegistry, ctx: AppContext, providers_dir: Path) -> None:
@@ -42,6 +44,18 @@ class ToolCall(BaseModel):
     input: Dict[str, Any] = {}
 
 
+def register_mcp_tools(mcp: FastMCP, registry: ToolRegistry, ctx: AppContext) -> None:
+    def make_tool(tool: MCPTool):
+        @mcp.tool(name=tool.name, description=tool.description)
+        def _tool(**kwargs):
+            return tool.handler(ctx, kwargs)
+
+        return _tool
+
+    for tool in registry.tools.values():
+        make_tool(tool)
+
+
 def create_app(config_path: Path | None = None) -> FastAPI:
     cfg = Path("config.example.toml") if config_path is None else config_path
     ctx = build_context(cfg)
@@ -49,7 +63,15 @@ def create_app(config_path: Path | None = None) -> FastAPI:
     repo_root = Path(__file__).resolve().parents[2]
     load_plugins(registry, ctx, repo_root / "providers")
 
-    app = FastAPI(title="MCP Server", version="0.1.0")
+    mcp = FastMCP("ClaudeCode-MCP", json_response=True, streamable_http_path="/")
+    register_mcp_tools(mcp, registry, ctx)
+
+    @contextlib.asynccontextmanager
+    async def lifespan(app: FastAPI):
+        async with mcp.session_manager.run():
+            yield
+
+    app = FastAPI(title="MCP Server", version="0.1.0", lifespan=lifespan)
 
     @app.get("/tools")
     def list_tools() -> Dict[str, Any]:
@@ -61,6 +83,8 @@ def create_app(config_path: Path | None = None) -> FastAPI:
         if not resp.get("ok"):
             raise HTTPException(status_code=400, detail=resp)
         return resp
+
+    app.mount("/mcp", mcp.streamable_http_app())
 
     return app
 
