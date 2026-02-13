@@ -84,7 +84,7 @@ def create_app(config_path: Path | None = None) -> FastAPI:
             raise HTTPException(status_code=400, detail=resp)
         return resp
 
-    app.mount("/mcp", mcp.streamable_http_app())
+    app.mount("/mcp/", mcp.streamable_http_app())
 
     return app
 
