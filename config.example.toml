@@ -1,3 +1,16 @@
 # wechat_mcp/config.example.toml
 [database]
 sqlite_path = "./mcp_service.sqlite3"
+
+[cookies]
+backend = "files"
+base_path = "./cookies"
+key_env = "MCP_COOKIES_KEY"
+key = ""
+encrypt = false
+
+[cookies.platforms.wechat]
+default_account = "account1"
+
+[cookies.platforms.wechat.accounts.account1]
+file = "wechat/account1.json"
