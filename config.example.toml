@@ -1,3 +1,3 @@
-﻿# wechat_mcp/config.example.toml
+# wechat_mcp/config.example.toml
 [database]
 sqlite_path = "./mcp_service.sqlite3"
