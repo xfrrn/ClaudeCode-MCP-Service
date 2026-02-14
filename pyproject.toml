@@ -20,6 +20,7 @@ packages = ["src/mcp_server"]
 
 [tool.uv.workspace]
 members = [
-  "providers/hello",
-  "providers/wechat",
+  "src/providers/hello",
+  "src/providers/wechat",
+  "src/providers/cookies",
 ]

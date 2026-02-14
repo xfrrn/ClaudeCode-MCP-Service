@@ -4,7 +4,7 @@
 ## Architecture
 - `src/mcp_server/main.py` loads configuration, builds `AppContext`, auto-discovers plugins, and routes tool calls.
 - `src/mcp_server/core/` contains registry, context, response helpers, and a simple HTTP client.
-- `providers/<name>/` are workspace packages; each provides `plugin.py` and `tools/` as a standalone package.
+- `src/providers/<name>/` are workspace packages; each provides `plugin.py` and `tools/` as a standalone package.
 
 ## Directory
 ```
@@ -20,7 +20,7 @@ ClaudeCode-MCP-Service/
 │     ├── errors.py
 │     ├── response.py
 │     └── http_client.py
-├── providers/
+├── src/providers/
 │ ├── hello/
 │ │ ├── pyproject.toml
 │ │ └── src/hello/
@@ -56,8 +56,8 @@ uv run uvicorn mcp_server.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## Add New Plugin
-1. Create a new workspace package under `providers/<plugin>/`.
-2. Put code in `providers/<plugin>/src/<plugin>/plugin.py` and `tools/`.
+1. Create a new workspace package under `src/providers/<plugin>/`.
+2. Put code in `src/providers/<plugin>/src/<plugin>/plugin.py` and `tools/`.
 3. Add the provider path to `[tool.uv.workspace].members` in `pyproject.toml`.
 4. Run `uv sync`. No core change required; the server auto-discovers plugins.
 

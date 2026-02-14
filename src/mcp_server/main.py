@@ -61,7 +61,7 @@ def create_app(config_path: Path | None = None) -> FastAPI:
     ctx = build_context(cfg)
     registry = ToolRegistry()
     repo_root = Path(__file__).resolve().parents[2]
-    load_plugins(registry, ctx, repo_root / "providers")
+    load_plugins(registry, ctx, repo_root / "src" / "providers")
 
     mcp = FastMCP("ClaudeCode-MCP", json_response=True, streamable_http_path="/")
     register_mcp_tools(mcp, registry, ctx)
