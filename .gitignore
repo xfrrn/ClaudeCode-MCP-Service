@@ -37,3 +37,4 @@ dist/
 .vscode/
 
 config.toml
+wechat_articles/

@@ -10,7 +10,16 @@ def register(registry, ctx):
         MCPTool(
             name="wechat.article.fetch",
             description="Fetch a wechat article (not implemented)",
-            input_schema={"type": "object", "properties": {}, "additionalProperties": True},
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string"},
+                    "timeout": {"type": "integer", "minimum": 1, "maximum": 120},
+                    "out_dir": {"type": "string"},
+                    "save_files": {"type": "boolean"},
+                },
+                "required": ["url"],
+            },
             handler=article_fetch,
         )
     )
