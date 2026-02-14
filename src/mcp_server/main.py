@@ -73,6 +73,10 @@ def create_app(config_path: Path | None = None) -> FastAPI:
 
     app = FastAPI(title="MCP Server", version="0.1.0", lifespan=lifespan)
 
+    @app.get("/")
+    def read_root():
+        return {"message": "Welcome to the MCP Server!"}
+
     @app.get("/tools")
     def list_tools() -> Dict[str, Any]:
         return {"tools": sorted(registry.tools.keys())}
