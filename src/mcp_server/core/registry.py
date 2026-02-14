@@ -4,7 +4,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Dict
 
-from mcp_server.core.response import ok, fail
+from mcp_server.core.errors import ERROR_TOOL_NOT_FOUND, ERROR_TOOL_EXECUTION
+from mcp_server.core.response import ok, fail_error
 
 
 Handler = Callable[["AppContext", Dict[str, Any]], Any]
@@ -30,7 +31,9 @@ class ToolRegistry:
     def invoke(self, name: str, payload: Dict[str, Any], ctx: "AppContext") -> Dict[str, Any]:
         tool = self.tools.get(name)
         if not tool:
-            return fail("tool_not_found", f"Tool not found: {name}", "Check tool name")
+            err = dict(ERROR_TOOL_NOT_FOUND)
+            err["message"] = f"Tool not found: {name}"
+            return fail_error(err)
 
         try:
             data = tool.handler(ctx, payload)
@@ -38,4 +41,4 @@ class ToolRegistry:
                 return data
             return ok(data)
         except Exception as exc:
-            return fail("tool_error", "Tool execution failed", str(exc))
+            return fail_error(ERROR_TOOL_EXECUTION, str(exc))
